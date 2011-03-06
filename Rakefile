@@ -29,7 +29,7 @@ namespace :scheduler do
                            'lib/trinidad_scheduler_extension/jars/quartz-1.8.4.jar', 
                            'lib/trinidad_scheduler_extension/jars/slf4j-api-1.6.1.jar',
                            'lib/trinidad_scheduler_extension/jars/slf4j-log4j12-1.6.1.jar',
-                           'README',
+                           'README.rdoc',
                            'LICENSE']
       gem.has_rdoc = false
       gem.version = TrinidadScheduler::VERSION
