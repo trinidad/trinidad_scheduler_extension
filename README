@@ -1,4 +1,4 @@
-Trinidad Scheduler
+Trinidad Scheduler Extension
 ===
 Trinidad Scheduler uses Quartz to schedule processes for execution.  It can be run as a server extension to Trinidad and/or a Web Application extension
 for Trinidad.  If run as a Server extension all schedulers will get the server configuration options each option that is defined at the Web Application
@@ -111,3 +111,17 @@ Using run_later with 20 second delay
     
 Behind the scemes *run_later* is actually implemented using an anonymous class that inherits from TrinidadScheduler.Simple to schedule the run.
 
+
+Inspiration
+---
+Open Source software is a community effort - thanks to all, but the following were instrumental in the inspiration for TrinidadScheduler.
+
+    [techwhizbang] (https://github.com/techwhizbang/jruby-quartz) for handling of Quartz JobFactory
+    [why_metaid] (https://github.com/evaryont/why_metaid) for metaid extension
+    [TERRACOTTA] (http://www.terracotta.org/) for continued support Quartz Scheduler
+    [calavera] (https://github.com/calavera/trinidad) for Trinidad Server
+
+
+Copyright
+---
+Copyright (c) 2011 Brandon Dewitt<brandon+trinidad_scheduler@myjibe.com>. See LICENSE for details.    
