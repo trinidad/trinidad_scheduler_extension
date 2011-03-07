@@ -51,7 +51,7 @@ that Quartz provides.  The implemented triggers are CronTrigger, SimpleTrigger, 
 
 Cron Trigger
 ---------
-To define a process to be run based on a [cron expression] (http://en.wikipedia.org/wiki/CRON_expression#CRON_expression)
+To define a process to be run based on a [cron expression](http://en.wikipedia.org/wiki/CRON_expression#CRON_expression)
 
     class ScheduledClass < TrinidadScheduler.Cron "0/5 * * * * ?"
       def run
@@ -116,12 +116,12 @@ Inspiration
 ---------
 Open Source software is a community effort - thanks to all, but the following were instrumental in the inspiration for TrinidadScheduler.
 
-    [techwhizbang] (https://github.com/techwhizbang/jruby-quartz) for handling of Quartz JobFactory
-    [why_metaid] (https://github.com/evaryont/why_metaid) for metaid extension
-    [TERRACOTTA] (http://www.terracotta.org/) for continued support Quartz Scheduler
-    [calavera] (https://github.com/calavera/trinidad) for Trinidad Server
+    [techwhizbang](https://github.com/techwhizbang/jruby-quartz) for handling of Quartz JobFactory
+    [why_metaid](https://github.com/evaryont/why_metaid) for metaid extension
+    [TERRACOTTA](http://www.terracotta.org/) for continued support Quartz Scheduler
+    [calavera](https://github.com/calavera/trinidad) for Trinidad Server
 
 
 Copyright
 ---------
-Copyright (c) 2011 Brandon Dewitt<brandon+trinidad_scheduler@myjibe.com>. See LICENSE for details.    
+Copyright (c) 2011 Brandon Dewitt <brandon+trinidad_scheduler "at" myjibe.com>. See LICENSE for details.    
