@@ -116,11 +116,10 @@ Inspiration
 ---------
 Open Source software is a community effort - thanks to all, but the following were instrumental in the inspiration for TrinidadScheduler.
 
-    [techwhizbang](https://github.com/techwhizbang/jruby-quartz) for handling of Quartz JobFactory
-    [why_metaid](https://github.com/evaryont/why_metaid) for metaid extension
-    [TERRACOTTA](http://www.terracotta.org/) for continued support Quartz Scheduler
-    [calavera](https://github.com/calavera/trinidad) for Trinidad Server
-
+[techwhizbang](https://github.com/techwhizbang/jruby-quartz) for handling of Quartz JobFactory
+[why_metaid](https://github.com/evaryont/why_metaid) for metaid extension
+[TERRACOTTA](http://www.terracotta.org/) for continued support Quartz Scheduler
+[calavera](https://github.com/calavera/trinidad) for Trinidad Server
 
 Copyright
 ---------
