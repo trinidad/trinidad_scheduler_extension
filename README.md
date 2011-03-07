@@ -120,7 +120,7 @@ Open Source software is a community effort - thanks to all, but the following we
 
 [why_metaid](https://github.com/evaryont/why_metaid) for metaid extension
 
-[TERRACOTTA](http://www.terracotta.org/) for continued support Quartz Scheduler
+[TERRACOTTA](http://www.terracotta.org/) for continued support of Quartz Scheduler
 
 [calavera](https://github.com/calavera/trinidad) for Trinidad Server
 
