@@ -10,7 +10,7 @@ namespace :scheduler do
       gem.summary = "Extension to support scheduled jobs in Trinidad: Extension"
       gem.description = "Extension to support scheduled jobs in Trinidad"
       gem.email = "brandon+trinidad_scheduler@myjibe.com"
-      gem.homepage = "https://github.com/bdewitt/trinidad_scheduler_extension"
+      gem.homepage = "https://github.com/trinidad/trinidad_scheduler_extension"
       gem.authors = ["Brandon Dewitt"]
       gem.add_dependency "trinidad_jars"
 
@@ -31,7 +31,7 @@ namespace :scheduler do
                            'lib/trinidad_scheduler_extension/jars/slf4j-log4j12-1.6.1.jar',
                            'README.rdoc',
                            'LICENSE']
-      gem.has_rdoc = false
+      gem.has_rdoc = true
       gem.version = TrinidadScheduler::VERSION
     end
     Jeweler::GemcutterTasks.new

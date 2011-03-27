@@ -109,7 +109,7 @@ Using run_later with 20 second delay
       _logger.info "I am inside this block" #=> prints "I am inside this block" 
     end 
     
-Behind the scemes *run_later* is actually implemented using an anonymous class that inherits from TrinidadScheduler.Simple to schedule the run.
+Behind the scenes *run_later* is actually implemented using an anonymous class that inherits from TrinidadScheduler.Simple to schedule the run.
 
 
 Inspiration
