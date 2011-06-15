@@ -1,6 +1,6 @@
 module TrinidadScheduler
-  CONFIG_HOME = File.expand_path(File.dirname(__FILE__) + "/trinidad_scheduler_extension/config")
-  JAR_HOME = File.expand_path(File.dirname(__FILE__) + "/trinidad_scheduler_extension/jars")
+  CONFIG_HOME = File.expand_path(File.dirname(__FILE__) + "/config")
+  JAR_HOME = File.expand_path(File.dirname(__FILE__) + "/jars")
   
   # Sets log4j properties if not established by Application Servers
   # TrinidadScheduler is really lazy so this is only set when a scheduler is needed
