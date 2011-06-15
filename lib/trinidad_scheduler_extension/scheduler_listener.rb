@@ -12,6 +12,10 @@ module TrinidadScheduler
       TrinidadScheduler.scheduler_exists?(@servlet_context) && !TrinidadScheduler[@servlet_context].is_started
     end
     
+    def is_started?
+      TrinidadScheduler.scheduler_exists?(@servlet_context) && TrinidadScheduler[@servlet_context].is_started
+    end
+    
     def lifecycle_event(event)
       case event.type
       when org.apache.catalina.Lifecycle::START_EVENT then
@@ -22,7 +26,7 @@ module TrinidadScheduler
         
         TrinidadScheduler.set_servlet_started(@servlet_context)
       when org.apache.catalina.Lifecycle::STOP_EVENT then
-        TrinidadScheduler[@servlet_context].shutdown if TrinidadScheduler.scheduler_exists?(@servlet_context) && TrinidadScheduler[@servlet_context].is_started
+        TrinidadScheduler[@servlet_context].shutdown if is_started?
       end
     end
   end
