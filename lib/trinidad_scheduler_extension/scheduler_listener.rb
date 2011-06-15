@@ -21,6 +21,8 @@ module TrinidadScheduler
         end
         
         TrinidadScheduler.set_servlet_started(@servlet_context)
+      when org.apache.catalina.Lifecycle::STOP_EVENT then
+        TrinidadScheduler[@servlet_context].shutdown if TrinidadScheduler.scheduler_exists?(@servlet_context) && TrinidadScheduler[@servlet_context].is_started
       end
     end
   end
