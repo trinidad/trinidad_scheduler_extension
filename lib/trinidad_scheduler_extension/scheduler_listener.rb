@@ -4,6 +4,10 @@ module TrinidadScheduler
     
     def initialize(servlet_context, options)
       @servlet_context = servlet_context
+      # $servlet_context is set by jruby-rack.
+      # If the sheduler jobs are loaded before the web app has been loaded they fail to initialize because $servlet_context is nil.
+      # We prevent this to happen here.
+      $servlet_context ||= servlet_context
       @options = options         
       TrinidadScheduler.store_scheduler_options(@servlet_context, @options)
     end
