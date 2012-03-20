@@ -1,5 +1,6 @@
-*.gemspec
 pkg
 *~
-.redcar/
 *.*~
+.redcar/
+nbproject
+Gemfile.lock
