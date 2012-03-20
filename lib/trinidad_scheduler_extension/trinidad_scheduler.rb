@@ -49,6 +49,17 @@ module TrinidadScheduler
     context.set_attribute(options_name(context), options)
   end
 
+  # Retrieve the stored configuration options from the ServletContext.
+  #
+  # @param [ServletContext] context
+  # @return [Hash]
+  def self.fetch_scheduler_options(context)
+    return nil unless options = context.get_attribute(options_name(context))
+    symbolized = Hash.new
+    options.each { |key, val| symbolized[key.to_s.to_sym] = val }
+    symbolized
+  end
+  
   # Centralized definition of where variables will be stored on the ServletContext
   def self.started_name(context)
     "TrinidadScheduler::#{context_path(context.context_path)}::ServletStarted"
@@ -68,14 +79,14 @@ module TrinidadScheduler
   # @param [ServletContext] context
   # @return [org.quartz.impl.StdScheduler]
   def self.[](context)
-    if !scheduler_exists?(context)
+    if ! scheduler_exists?(context)
       self.trinidad_scheduler_init_log4j
-      self[context] = self.quartz_scheduler(context, context.get_attribute(options_name(context)))
+      self[context] = self.quartz_scheduler(context)
     end
     
     scheduler = context.get_attribute(scheduler_name(context)) 
     
-    if !scheduler.is_started && servlet_started?(context)
+    if ! scheduler.is_started && servlet_started?(context)
       scheduler.start
       scheduler.resume_all
     end
@@ -91,14 +102,15 @@ module TrinidadScheduler
     context.set_attribute(scheduler_name(context), scheduler)
   end 
   
+  DEFAULT_SCHEDULER_OPTIONS = { :wrapped => false, :thread_count => 10, :thread_priority => 5 }.freeze
+  
   # Method to build and return Quartz schedulers
   #
   # @param [ServletContext] context
   # @param [Hash] opts, the options to configure the scheduler with 
-  def self.quartz_scheduler(context, opts={})
-    options = {:wrapped => false, :thread_count => 10, :thread_priority => 5}
-    options.merge!(opts)
-    options[:name] = context_path(context.context_path)
+  def self.quartz_scheduler(context, options = fetch_scheduler_options(context))
+    options = DEFAULT_SCHEDULER_OPTIONS.merge(options || {})
+    options[:name] ||= context_path(context.context_path)
     
     scheduler_factory = org.quartz.impl.StdSchedulerFactory.new
     scheduler_factory.initialize(quartz_properties(options))
