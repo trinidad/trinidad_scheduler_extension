@@ -4,8 +4,9 @@ require 'trinidad_scheduler_extension/version'
 
 Gem::Specification.new do |s|
   s.name = "trinidad_scheduler_extension"
-  s.summary = "Extension to support scheduled jobs in Trinidad: Extension"
-  s.description = "Extension to support scheduled jobs in Trinidad"
+  s.summary = "Trinidad extension for scheduling background jobs"
+  s.description = "Trinidad Scheduler uses Quartz to schedule processes for execution. " + 
+                  "It can be run as a server extension to Trinidad and/or a Web Application extension for Trinidad."
   s.email = "brandon+trinidad_scheduler@myjibe.com"
   s.homepage = "https://github.com/trinidad/trinidad_scheduler_extension"
   s.authors = ["Brandon Dewitt"]

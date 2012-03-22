@@ -11,8 +11,15 @@ module TrinidadScheduler
   end 
   
   # Standardizing the naming of the variables that are stored on the context
+  # #deprecated use #context_name(context) instead
   def self.context_path(path)
     path.gsub("/", "") == "" ? "Default" : path.gsub("/", "").capitalize
+  end
+
+  def self.context_name(context)
+    path = context.context_path rescue ""
+    path.gsub!("/", "")
+    path == "" ? "Default" : path.capitalize
   end
   
   # Assists in lazily evaluating if a scheduler is needed for a context
@@ -62,15 +69,15 @@ module TrinidadScheduler
   
   # Centralized definition of where variables will be stored on the ServletContext
   def self.started_name(context)
-    "TrinidadScheduler::#{context_path(context.context_path)}::ServletStarted"
+    "TrinidadScheduler::#{context_name(context)}::ServletStarted"
   end
   
   def self.options_name(context)
-    "TrinidadScheduler::#{context_path(context.context_path)}::SchedulerOptions"
+    "TrinidadScheduler::#{context_name(context)}::SchedulerOptions"
   end
   
   def self.scheduler_name(context)
-    "TrinidadScheduler::#{context_path(context.context_path)}::Scheduler"
+    "TrinidadScheduler::#{context_name(context)}::Scheduler"
   end
   
   # Bracket accessor defined to retreive the scheduler for a context
@@ -102,7 +109,7 @@ module TrinidadScheduler
     context.set_attribute(scheduler_name(context), scheduler)
   end 
   
-  DEFAULT_SCHEDULER_OPTIONS = { :wrapped => false, :thread_count => 10, :thread_priority => 5 }.freeze
+  DEFAULT_SCHEDULER_OPTIONS = { :wrapped => false, :thread_count => 10, :thread_priority => 5 }
   
   # Method to build and return Quartz schedulers
   #
@@ -110,7 +117,7 @@ module TrinidadScheduler
   # @param [Hash] opts, the options to configure the scheduler with 
   def self.quartz_scheduler(context, options = fetch_scheduler_options(context))
     options = DEFAULT_SCHEDULER_OPTIONS.merge(options || {})
-    options[:name] ||= context_path(context.context_path)
+    options[:name] ||= context_name(context)
     
     scheduler_factory = org.quartz.impl.StdSchedulerFactory.new
     scheduler_factory.initialize(quartz_properties(options))
