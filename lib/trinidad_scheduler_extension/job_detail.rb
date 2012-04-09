@@ -10,6 +10,10 @@ module TrinidadScheduler
       @job = job_class.new
     end
     
+    def isStateful()
+      @job.is_a?(org.quartz.StatefulJob)
+    end
+
     def validate()
       raise org.quartz.SchedulerException.new("Job's name cannot be null",
         org.quartz.SchedulerException.ERR_CLIENT_ERROR) if get_name == nil
