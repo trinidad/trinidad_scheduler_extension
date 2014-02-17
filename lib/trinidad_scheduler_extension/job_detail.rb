@@ -1,20 +1,24 @@
-module TrinidadScheduler 
+module TrinidadScheduler
   class JobDetail < org.quartz.JobDetail
-    
-    attr_accessor :job
-    
+
+    attr_reader :job
+
     def initialize(name, group, job_class)
       super()
       set_name name
       set_group group
       @job = job_class.new
     end
-    
-    def validate()
+
+    def validate
       raise org.quartz.SchedulerException.new("Job's name cannot be null",
-        org.quartz.SchedulerException.ERR_CLIENT_ERROR) if get_name == nil
+        org.quartz.SchedulerException.ERR_CLIENT_ERROR) unless name
       raise org.quartz.SchedulerException.new("Job's group cannot be null",
-        org.quartz.SchedulerException.ERR_CLIENT_ERROR) if get_group == nil  
-    end  
+        org.quartz.SchedulerException.ERR_CLIENT_ERROR) unless group
+    end
+
+    # @deprecated
+    def job=(job); @job = job end
+
   end
 end
