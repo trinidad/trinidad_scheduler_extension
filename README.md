@@ -14,12 +14,12 @@ Most processes we schedule are scheduled using the *Cron* Trigger and *run_later
 Along with Trinidad in your application's *Gemfile* :
 
 ```ruby
-  group :server do
-    platform :jruby do
-      gem 'trinidad', require: false
-      gem 'trinidad_scheduler_extension', require: false
-    end
+group :server do
+  platform :jruby do
+    gem 'trinidad', require: false
+    gem 'trinidad_scheduler_extension', require: false
   end
+end
 ```
 
     $ bundle
