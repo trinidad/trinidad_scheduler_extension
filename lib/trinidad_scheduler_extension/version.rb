@@ -1,7 +1,7 @@
 module Trinidad
   module Extensions
     module Scheduler
-      VERSION = "0.3.0"
+      VERSION = "0.2.0"
     end
   end
 end
