@@ -1,6 +1,6 @@
-== TrinidadScheduler Extension
 
-Copyright (c) 2011 Brandon Dewitt
+Copyright (c) 2011-2014 Brandon Dewitt
+Copyright (c) 2012-2014 Team Trinidad
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -23,4 +23,5 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 == Additional Bundled Software
 
-Quartz Scheduler is licensed according to the terms of Apache License, Version 2.0 (current). See http://www.apache.org/licenses/LICENSE-2.0 for details.
+Quartz Scheduler is licensed under the terms of Apache License, Version 2.0.
+See http://www.apache.org/licenses/LICENSE-2.0 for details.
