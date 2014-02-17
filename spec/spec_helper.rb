@@ -6,12 +6,12 @@ rescue LoadError => e
 end
 Bundler.require(:default, :test)
 
-require 'rspec'
-require 'mocha'
-
 lib = File.expand_path('../lib', File.dirname(__FILE__))
 $: << lib if ! $:.include?(lib) && ! $:.include?('lib')
 require 'trinidad_scheduler_extension'
+
+require 'rspec'
+require 'mocha'
 
 RSpec.configure do |config|
   config.mock_framework = :mocha
