@@ -1,4 +1,4 @@
-module TrinidadScheduler
+module Quartz
   class JobDetail < org.quartz.JobDetail
 
     attr_reader :job

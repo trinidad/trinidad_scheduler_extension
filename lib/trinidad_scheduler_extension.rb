@@ -7,8 +7,6 @@ require 'trinidad_scheduler_extension/jars'
 require 'trinidad_scheduler_extension/version'
 
 require 'trinidad_scheduler_extension/trinidad_scheduler'
-require 'trinidad_scheduler_extension/job_detail'
-require 'trinidad_scheduler_extension/job_factory'
 require 'trinidad_scheduler_extension/app_job'
 
 module Trinidad

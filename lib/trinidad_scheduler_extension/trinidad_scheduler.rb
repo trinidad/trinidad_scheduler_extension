@@ -1,7 +1,11 @@
+require 'trinidad_scheduler_extension/quartz/job_detail'
+require 'trinidad_scheduler_extension/quartz/job_factory'
 require 'trinidad_scheduler_extension/quartz/scheduled_job'
 
 module TrinidadScheduler
 
+  JobDetail = Quartz::JobDetail
+  JobFactory = Quartz::JobFactory
   ScheduledJob = Quartz::ScheduledJob
 
   CONFIG_HOME = File.expand_path('config', File.dirname(__FILE__))
