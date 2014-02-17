@@ -1,7 +1,4 @@
-require 'java'
-
 require 'trinidad'
-require 'trinidad/jars'
 
 # Jar files that are needed
 require 'trinidad_scheduler_extension/jars'
