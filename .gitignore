@@ -4,3 +4,4 @@ pkg
 .redcar/
 nbproject
 Gemfile.lock
+.bundle/
