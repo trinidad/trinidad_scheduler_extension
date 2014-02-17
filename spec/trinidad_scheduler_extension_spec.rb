@@ -11,18 +11,11 @@ describe Trinidad::Extensions::SchedulerServerExtension do
     Trinidad::Server.new({
       :extensions => { :scheduler => {} },
       :web_apps => {
-        :default => {
-          :web_app_dir => MOCK_WEB_APP_DIR,
+        :scheduled => {
+          :root_dir => MOCK_WEB_APP_DIR,
           :extensions => { :scheduler => { :num_threads => 12 } }
         },
-        :unscheduled => {
-          :context_path => "/unscheduled",
-          :web_app_dir => MOCK_WEB_APP_DIR
-        },
-        :unscheduled2 => {
-          :context_path => "/unscheduled2",
-          :web_app_dir => MOCK_WEB_APP_DIR
-        }
+        :default => { :root_dir => MOCK_WEB_APP_DIR },
       }
     })
   end
@@ -31,11 +24,10 @@ describe Trinidad::Extensions::SchedulerServerExtension do
   let(:tomcat) { server.deploy_web_apps; server.tomcat }
 
   let(:default_context) { tomcat.host.find_child("default") }
-  let(:unscheduled_context) { tomcat.host.find_child("unscheduled") }
-  let(:unscheduled2_context) { tomcat.host.find_child("unscheduled2") }
+  let(:scheduled_context) { tomcat.host.find_child("scheduled") }
 
   let(:default_web_app) { web_apps.find { |app| app.context_path == '/' } }
-  let(:unscheduled_web_app) { web_apps.find { |app| app.context_path == '/unscheduled' } }
+  let(:scheduled_web_app) { web_apps.find { |app| app.context_path == '/scheduled' } }
 
   subject { Trinidad::Extensions::SchedulerServerExtension.new }
 
@@ -46,20 +38,62 @@ describe Trinidad::Extensions::SchedulerServerExtension do
     # app = Trinidad::WebApp.create(config, {})
     # app.extensions.should include(:scheduler)
     # app.extensions[:scheduler].should be_empty
-    expect( unscheduled_web_app.extensions ).to_not be_empty
-    expect( unscheduled_web_app.extensions[:scheduler] ).to be_empty
+    expect( default_web_app.extensions ).to_not be_empty
+    expect( default_web_app.extensions[:scheduler] ).to be_empty
   end
 
   it "overrides server extension params when configured by application" do
-    expect( default_web_app.extensions ).to_not be_empty
-    expect( default_web_app.extensions[:scheduler] ).to_not be_empty
-    expect( default_web_app.extensions[:scheduler][:num_threads] ).to eql 12
+    expect( scheduled_web_app.extensions ).to_not be_empty
+    expect( scheduled_web_app.extensions[:scheduler] ).to_not be_empty
+    expect( scheduled_web_app.extensions[:scheduler][:num_threads] ).to eql 12
   end
 
   it "does not create a scheduler if no scheduling is done on initialization" do
-    [ default_context, unscheduled_context, unscheduled2_context ].each do |context|
+    [ default_context, scheduled_context ].each do |context|
       TrinidadScheduler.scheduler_exists?(context.servlet_context).should be_false
     end
+  end
+
+end
+
+
+describe Trinidad::Extensions::SchedulerWebAppExtension do
+
+  SchedulerLifecycle = Trinidad::Extensions::SchedulerWebAppExtension::SchedulerLifecycle
+
+  let(:server) do
+    Trinidad::Server.new({
+      :web_apps => {
+        :default => {
+          :root_dir => MOCK_WEB_APP_DIR,
+          :extensions => { :scheduler => { :num_threads => 2 } }
+        },
+      }
+    })
+  end
+
+  let(:tomcat) { server.deploy_web_apps; server.tomcat }
+
+  let(:default_context) { tomcat.host.find_child("default") }
+
+  it "configures web-app listener" do
+    listeners = default_context.find_lifecycle_listeners
+    listeners = listeners.find_all { |l| l.is_a?(SchedulerLifecycle) }
+    expect( listeners.size ).to eql 1
+  end
+
+  it "starts and stops context" do
+    context = default_context
+    context.start
+
+    servlet_context = context.servlet_context
+    
+    # since we're lazy :
+    TrinidadScheduler.scheduler_exists?(servlet_context).should be_false
+
+    context.stop
+
+    TrinidadScheduler.scheduler_exists?(servlet_context).should be_false
   end
 
 end
