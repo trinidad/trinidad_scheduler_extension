@@ -1,4 +1,8 @@
+require 'trinidad_scheduler_extension/quartz/scheduled_job'
+
 module TrinidadScheduler
+
+  ScheduledJob = Quartz::ScheduledJob
 
   CONFIG_HOME = File.expand_path('config', File.dirname(__FILE__))
 
@@ -95,19 +99,19 @@ module TrinidadScheduler
   # @param [ServletContext] context
   # @return [org.quartz.impl.StdScheduler]
   def self.[](context)
-    if ! scheduler_exists?(context)
+    unless scheduler_exists?(context)
       self.initialize_configuration!
-      self[context] = self.quartz_scheduler(context)
+      self[context] = quartz_scheduler(context)
     end
 
-    scheduler = context.get_attribute(scheduler_name(context))
-
-    if ! scheduler.is_started && servlet_started?(context)
-      scheduler.start
-      scheduler.resume_all
+    if servlet_started?(context) && scheduler = scheduler!(context)
+      unless scheduler.started?
+        scheduler.start
+        scheduler.resume_all
+      end
     end
 
-    return scheduler
+    scheduler
   end
 
   # Bracket assignment operator, will attach the scheduler passed to the context in the brackets

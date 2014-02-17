@@ -22,8 +22,8 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'trinidad', ">= 1.4.6"
 
-  gem.add_development_dependency 'rspec', '~> 2.14.1'
   gem.add_development_dependency 'rake'
+  gem.add_development_dependency 'rspec', '~> 2.14.1'
   gem.add_development_dependency 'mocha', '>= 0.10.4'
 
   gem.files = `git ls-files`.split("\n").sort.reject { |file| file =~ /^spec\// }
