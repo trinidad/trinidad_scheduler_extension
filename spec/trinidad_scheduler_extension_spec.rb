@@ -21,7 +21,7 @@ describe Trinidad::Extensions::SchedulerServerExtension do
   end
 
   let(:web_apps) { server.deploy_web_apps.map(&:web_app) }
-  let(:tomcat) { server.deploy_web_apps; server.tomcat }
+  let(:tomcat) { web_apps; server.tomcat }
 
   let(:default_context) { tomcat.host.find_child("default") }
   let(:scheduled_context) { tomcat.host.find_child("scheduled") }
@@ -29,9 +29,8 @@ describe Trinidad::Extensions::SchedulerServerExtension do
   let(:default_web_app) { web_apps.find { |app| app.context_path == '/' } }
   let(:scheduled_web_app) { web_apps.find { |app| app.context_path == '/scheduled' } }
 
-  subject { Trinidad::Extensions::SchedulerServerExtension.new }
-
-  before(:each) { subject.configure(server.tomcat) }
+  # subject { Trinidad::Extensions::SchedulerServerExtension.new }
+  # before(:each) { subject.configure(server.tomcat) }
 
   it "uses the server extension when configured" do
     # config = { :extensions => { :scheduler => {} } }
@@ -52,6 +51,12 @@ describe Trinidad::Extensions::SchedulerServerExtension do
     [ default_context, scheduled_context ].each do |context|
       TrinidadScheduler.scheduler_exists?(context.servlet_context).should be_false
     end
+  end
+
+  it "configured web-app listener" do
+    listeners = default_context.find_lifecycle_listeners
+    listeners = listeners.find_all { |l| l.is_a?(SchedulerLifecycle) }
+    expect( listeners.size ).to eql 1
   end
 
 end
@@ -84,12 +89,15 @@ describe Trinidad::Extensions::SchedulerWebAppExtension do
 
   it "starts and stops context" do
     context = default_context
+    servlet_context = context.servlet_context
+
+    TrinidadScheduler.servlet_started?(servlet_context).should be_false
+
     context.start
 
-    servlet_context = context.servlet_context
-    
     # since we're lazy :
     TrinidadScheduler.scheduler_exists?(servlet_context).should be_false
+    TrinidadScheduler.servlet_started?(servlet_context).should be_true
 
     context.stop
 
