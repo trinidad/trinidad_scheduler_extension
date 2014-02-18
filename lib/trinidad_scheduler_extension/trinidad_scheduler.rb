@@ -1,5 +1,6 @@
 require 'trinidad_scheduler_extension/quartz/job_detail'
 require 'trinidad_scheduler_extension/quartz/job_factory'
+require 'trinidad_scheduler_extension/quartz/job_error'
 require 'trinidad_scheduler_extension/quartz/scheduled_job'
 
 module TrinidadScheduler
@@ -7,12 +8,17 @@ module TrinidadScheduler
   JobDetail = Quartz::JobDetail
   JobFactory = Quartz::JobFactory
   ScheduledJob = Quartz::ScheduledJob
+  # AppJob = Quartz::AppJob
+
+  #def self.Cron(*args); Quartz::Cron(*args) end
+  #def self.Simple(*args); Quartz::Simple(*args) end
+  #def self.DateInterval(*args); Quartz::DateInterval(*args) end
 
   CONFIG_HOME = File.expand_path('config', File.dirname(__FILE__))
 
   # Sets log4j properties if not established by Application Servers
   # TrinidadScheduler is really lazy so this is only set when a scheduler is needed
-  def self.initialize_configuration!
+  def self.initialize_configuration! # TODO avoid Log4J by default by using JUL
     unless Java::JavaLang::System.getProperty('log4j.configuration')
       log4j_properties = Java::JavaIo::File.new("#{CONFIG_HOME}/log4j.properties")
       Java::JavaLang::System.setProperty('log4j.configuration', log4j_properties.to_url.to_s)
@@ -130,8 +136,9 @@ module TrinidadScheduler
   #
   # @param [ServletContext] context
   # @param [Hash] opts, the options to configure the scheduler with
+  # @private
   def self.quartz_scheduler(context, options = fetch_scheduler_options(context))
-    name = options[:name] || context_name(context)
+    name = options.delete(:name) || context_name(context)
 
     scheduler_factory = org.quartz.impl.StdSchedulerFactory.new
     scheduler_factory.initialize(quartz_properties(name, options))
@@ -142,24 +149,43 @@ module TrinidadScheduler
     scheduler
   end
 
-  # Properties stream for initializing a scheduler
-  # @TODO Currently restricts schedulers to RAMJobStore and SimpleThreadPool
+  # @private
   def self.quartz_properties(name, options = {})
-    name = options[:name] || context_name(context)
     defaults = {
-      'org.quartz.scheduler.rmi.export' => false,
-      'org.quartz.scheduler.rmi.proxy' => false,
-      'org.quartz.scheduler.wrapJobExecutionInUserTransaction' => !! options[:wrapped],
+      'org.quartz.scheduler.instanceName' => "Quartz::#{name}::Application",
+      'org.quartz.scheduler.rmi.export' => false, 'org.quartz.scheduler.rmi.proxy' => false,
       'org.quartz.threadPool.class' => 'org.quartz.simpl.SimpleThreadPool',
-      'org.quartz.threadPool.threadCount' => options[:thread_count] || 10, # TODO
-      'org.quartz.threadPool.threadPriority' => options[:thread_priority] || 5,
-      'org.quartz.threadPool.threadNamePrefix' => "WorkerThread::#{name}", # TODO
-      'org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread' => true, # TODO
-      'org.quartz.jobStore.misfireThreshold' => 60000,
+      'org.quartz.threadPool.threadNamePrefix' => "Quartz::#{name}::Worker",
+      'org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread' => true,
       'org.quartz.jobStore.class' => 'org.quartz.simpl.RAMJobStore',
+      'org.quartz.jobStore.misfireThreshold' => 60000,
     }
-    properties = java.util.Properties.new
-    properties.setProperty("org.quartz.scheduler.instanceName", "Quartz::#{name}::Application")
+
+    # to interrupt jobs if they are still in execution when shutting down :
+    interrupt_on_shutdown = options.delete(:interrupt_on_shutdown)
+    unless interrupt_on_shutdown.nil?
+      defaults['org.quartz.scheduler.interruptJobsOnShutdown'] = !! interrupt_on_shutdown
+    end
+    wrap_in_user_tx = options.key?(:wrapped) ? options.delete(:wrapped) : options.delete(:wrap_in_user_transaction)
+    unless wrap_in_user_tx.nil?
+      defaults['org.quartz.scheduler.wrapJobExecutionInUserTransaction'] = !! wrap_in_user_tx
+    end
+
+    if thread_count = options.delete(:thread_count) || options.delete(:'threadPool.threadCount')
+      defaults['org.quartz.threadPool.threadCount'] = thread_count
+    end
+    if thread_priority = options.delete(:thread_priority) || options.delete(:'threadPool.threadPriority')
+      defaults['org.quartz.threadPool.threadPriority'] = thread_priority
+    end
+
+    options.each do |key, value|
+      key = key.to_s; next unless key.index('.')
+      # qualify e.g. 'jobStore.class' -> 'org.quartz.jobStore.class'
+      key = "org.quartz.#{key}" unless key.index('org.quartz.')
+      defaults[key] = value unless defaults.key?(key)
+    end
+
+    properties = Java::JavaUtil::Properties.new
     defaults.each { |key, value| properties.setProperty(key, value.to_s) unless value.nil? }
     properties
   end

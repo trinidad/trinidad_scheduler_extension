@@ -40,6 +40,14 @@ In either the **extensions** block or under web app's **extentions** add "schedu
   # ...
   extensions:
     scheduler:
+      # #some shortcuts are provided :
+      # thread_count: 3
+      # thread_priority: 5
+      # interrupt_on_shutdown: false
+      # #any quartz config might be specified :
+      # org.quartz.jobStore.misfireThreshold: 1000
+      # #short format (without org.quartz prefix) :
+      # rmi.export: true
 ```
 
 ### Example
@@ -180,11 +188,12 @@ were instrumental in the inspiration for Trinidad's scheduler :
 
 [TERRACOTTA](http://www.terracotta.org/) for continued support of Quartz Scheduler
 
-[calavera](https://github.com/calavera/trinidad) for Trinidad Server
+[@calavera](https://github.com/calavera) for Trinidad server
 
 ## Copyright
 
 Copyright (c) 2011 [Brandon Dewitt](https://github.com/abrandoned).
+Copyright (c) 2014 [Team Trinidad](https://github.com/trinidad).
 See LICENSE (http://en.wikipedia.org/wiki/MIT_License) for details.
 
 [1]: http://en.wikipedia.org/wiki/CRON_expression#CRON_expression
