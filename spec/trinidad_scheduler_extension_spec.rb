@@ -16,6 +16,10 @@ describe Trinidad::Extensions::SchedulerServerExtension do
           :extensions => { :scheduler => { :num_threads => 12 } }
         },
         :default => { :root_dir => MOCK_WEB_APP_DIR },
+        :unscheduled => {
+          :context_path => '/unscheduled', :root_dir => MOCK_WEB_APP_DIR,
+          :extensions => { :scheduler => false } # disables the server extension
+        },
       }
     })
   end
@@ -25,9 +29,11 @@ describe Trinidad::Extensions::SchedulerServerExtension do
 
   let(:default_context) { tomcat.host.find_child("default") }
   let(:scheduled_context) { tomcat.host.find_child("scheduled") }
+  let(:unscheduled_context) { tomcat.host.find_child("unscheduled") }
 
   let(:default_web_app) { web_apps.find { |app| app.context_path == '/' } }
   let(:scheduled_web_app) { web_apps.find { |app| app.context_path == '/scheduled' } }
+  let(:unscheduled_web_app) { web_apps.find { |app| app.context_path == '/unscheduled' } }
 
   # subject { Trinidad::Extensions::SchedulerServerExtension.new }
   # before(:each) { subject.configure(server.tomcat) }
@@ -57,6 +63,18 @@ describe Trinidad::Extensions::SchedulerServerExtension do
     listeners = default_context.find_lifecycle_listeners
     listeners = listeners.find_all { |l| l.is_a?(SchedulerLifecycle) }
     expect( listeners.size ).to eql 1
+
+    listeners = scheduled_context.find_lifecycle_listeners
+    listeners = listeners.find_all { |l| l.is_a?(SchedulerLifecycle) }
+    expect( listeners.size ).to eql 1
+  end
+
+  it "did not setup web-app listener when scheduler: false" do
+    next unless Trinidad::VERSION > '1.4.6'
+    
+    listeners = unscheduled_context.find_lifecycle_listeners
+    listeners = listeners.find_all { |l| l.is_a?(SchedulerLifecycle) }
+    expect( listeners.size ).to eql 0
   end
 
 end

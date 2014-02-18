@@ -64,10 +64,13 @@ module Trinidad
 
     end
 
+    # NOTE: disabled the server extension - since the extensions[:scheduler]
+    # hash gets merged into each web-app's configuration (on recent Trinidad).
+    # @private
     class SchedulerServerExtension < ServerExtension
 
       def configure(tomcat)
-        # TODO this won't work for multiple host configurations ...
+        return unless ENV['Trindidad::Extensions::SchedulerServerExtension']
         tomcat.host.add_container_listener(ContextListener.new(options))
       end
 
