@@ -71,7 +71,7 @@ describe Trinidad::Extensions::SchedulerServerExtension do
 
   it "did not setup web-app listener when scheduler: false" do
     next unless Trinidad::VERSION > '1.4.6'
-    
+
     listeners = unscheduled_context.find_lifecycle_listeners
     listeners = listeners.find_all { |l| l.is_a?(SchedulerLifecycle) }
     expect( listeners.size ).to eql 0
@@ -120,6 +120,27 @@ describe Trinidad::Extensions::SchedulerWebAppExtension do
     context.stop
 
     TrinidadScheduler.scheduler_exists?(servlet_context).should be_false
+    TrinidadScheduler.servlet_started?(servlet_context).should be_false
+  end
+
+  it "does not start scheduler in rackup mode" do
+    context = default_context
+    context.find_application_listeners.each do |listener|
+      context.remove_application_listener listener
+    end
+
+    event = stub('event', :lifecycle => context)
+    expect( find_scheduler_lifecycle.send(:start_scheduler?, event) ).to be false
+
+    servlet_context = context.servlet_context
+    TrinidadScheduler.servlet_started?(servlet_context).should be_false
+  end
+
+  private
+
+  def find_scheduler_lifecycle(context = default_context)
+    listeners = context.find_lifecycle_listeners
+    listeners.find { |l| l.is_a?(SchedulerLifecycle) }
   end
 
 end

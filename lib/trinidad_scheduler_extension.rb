@@ -33,13 +33,19 @@ module Trinidad
           $servlet_context = servlet_context unless $servlet_context.is_a?(javax.servlet.ServletContext)
 
           TrinidadScheduler.store_scheduler_options(servlet_context, options)
+          @start_scheduler = nil
         end
 
-        def before_init(event)
+        def configure_start(event)
+          # NOTE: context.application_listeners setup at this point
+          return unless start_scheduler?(event)
+
           TrinidadScheduler.initialize_configuration!
         end
 
         def start(event)
+          return unless start_scheduler?(event)
+
           servlet_context = event.lifecycle.servlet_context
 
           scheduler = TrinidadScheduler.scheduler(servlet_context)
@@ -58,6 +64,20 @@ module Trinidad
           scheduler = TrinidadScheduler.scheduler(servlet_context)
 
           scheduler.shutdown if scheduler && scheduler.started?
+        end
+
+        private
+
+        def start_scheduler?(event)
+          return @start_scheduler unless @start_scheduler.nil?
+          context = event.lifecycle
+          # NOTE: in "rackup" mode empty no 'org.jruby.rack.RackServletContextListener'
+          start = context.findApplicationListeners.length > 0
+          start ||= Java::JavaLang::Boolean.getBoolean('trinidad.extensions.scheduler')
+          unless @start_scheduler = start
+            context.logger.info "Skipped configuration of scheduler extension (due rackup mode)"
+          end
+          @start_scheduler
         end
 
       end
