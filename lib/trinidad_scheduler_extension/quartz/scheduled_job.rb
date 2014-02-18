@@ -1,25 +1,12 @@
-require 'trinidad_scheduler_extension/slf4j/logger'
 
 module Quartz
   module ScheduledJob
 
-    class JobError < StandardError
-
-      unless method_defined?(:cause)
-
-        attr_reader :cause
-
-        def initialize(arg = nil)
-          @cause = arg.is_a?(Exception) ? arg : nil
-          super(@cause ? @cause.message : arg)
-        end
-
-      end
-
-    end
+    # @private
+    JobError = Quartz::JobError
 
     def self.included(base)
-      base.send :include, org.quartz.Job
+      base.send :include, org.quartz.Job if base.is_a?(Class)
     end
 
     def run
@@ -41,9 +28,10 @@ module Quartz
 
     def logger
       @_logger ||= begin
-        Java::OrgSlf4j::LoggerFactory.getLogger(self.class.name)
-        #logger.extend Slf4j::Logger unless logger.is_a? Slf4j::Logger
-        #logger
+        require 'trinidad_scheduler_extension/slf4j/logger'
+        logger = Java::OrgSlf4j::LoggerFactory.getLogger(self.class.name)
+        # logger.extend Slf4j::Logger unless logger.is_a? Slf4j::Logger
+        logger
       end
     end
     alias_method :_logger, :logger
