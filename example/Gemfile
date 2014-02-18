@@ -1,0 +1,23 @@
+source 'https://rubygems.org'
+
+# Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+gem 'rails', '4.0.2'
+
+# Use jdbcsqlite3 as the database for Active Record
+gem 'activerecord-jdbcsqlite3-adapter', platform: :jruby
+
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+gem 'therubyrhino'
+
+# Use jquery as the JavaScript library
+gem 'jquery-rails'
+
+# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'jbuilder', '~> 1.2'
+
+group :server do
+  platform :jruby do
+    gem 'trinidad', require: false
+    gem 'trinidad_scheduler_extension', require: false
+  end
+end
