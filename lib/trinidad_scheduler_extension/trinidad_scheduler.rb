@@ -101,7 +101,7 @@ module TrinidadScheduler
     options[:name] = context_path(context.context_path)
     
     scheduler_factory = org.quartz.impl.StdSchedulerFactory.new
-    scheduler_factory.initialize(quartz_properties(options))
+    scheduler_factory.java_send(:initialize, [java.util.Properties], quartz_properties(options))
     scheduler = scheduler_factory.get_scheduler
     scheduler.set_job_factory(TrinidadScheduler::JobFactory.new)
     scheduler.pause_all
